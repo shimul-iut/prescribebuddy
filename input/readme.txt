@@ -1,0 +1,1 @@
+Place your pdf file in this location. Make sure it has a .pdf extension.

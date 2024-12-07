@@ -1,4 +1,5 @@
 import os
+import argparse
 import base64
 from PIL import Image, ImageDraw, ImageFont
 import anthropic
@@ -12,13 +13,15 @@ load_dotenv()
 
 class PrescribeBuddy:
     
-    def __init__(self):
+    def __init__(self, file_name):
+        
+        
         """Initialize the processor with your Anthropic API key from .env."""
         self.client = anthropic.Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
         script_dir = os.path.dirname(os.path.abspath(__file__))  # Gets the directory where run.py is located
         dxf_directory = os.path.join(script_dir, "input")
     
-        self.input_path = os.path.join(dxf_directory,"prescription.pdf")
+        self.input_path = os.path.join(dxf_directory, file_name)
         self.output_dir = os.path.join(script_dir,"output")
         
     def pdf_to_images(self, max_file_size_mb=4, initial_dpi=800, max_dimension=8000):
@@ -136,12 +139,15 @@ def delete_folder(folder_path):
 
 
 def main():
-    """Process pdf with Claude Vision API"""
+    parser = argparse.ArgumentParser(description="Process a file.")
+    parser.add_argument("filename", help="The name of the file to process")
+
+    # Parse the arguments
+    args = parser.parse_args()
     print("\n=== Converting PDF to Image ===")
-    
-   
+
     try:
-        processor = PrescribeBuddy()
+        processor = PrescribeBuddy(args.filename)
         result = processor.pdf_to_images()
         print("\n=== Starting scanning Image ===")
 
